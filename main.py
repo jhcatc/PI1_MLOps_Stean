@@ -99,6 +99,7 @@ async def sentiment_analysis(año: int) -> dict:
             nuevo_counts[sentimiento] = 0
     
     return nuevo_counts
+<<<<<<< HEAD
 
 
 '''
@@ -106,3 +107,5 @@ ________________________________________________________________________________
 ''' 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=10000)
+=======
+>>>>>>> 3123ad41b2acbbb3a86f7b021308e0dea79b150b
