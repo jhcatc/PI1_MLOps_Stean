@@ -16,10 +16,10 @@ ________________________________________________________________________________
 current_directory = os.path.dirname(os.path.realpath(__file__))
 
 # Monta la carpeta "static" como archivos estáticos en la ruta "/static"
-app.mount("/static", StaticFiles(directory=os.path.join(current_directory, "code", "app", "static")), name="static")
+app.mount("/static", StaticFiles(directory=os.path.join(current_directory, "venv", "code", "app", "static")), name="static")
 
 # Crea una instancia de Jinja2Templates para renderizar templates HTML
-templates = Jinja2Templates(directory=os.path.join(current_directory, "code", "app"))
+templates = Jinja2Templates(directory=os.path.join(current_directory, "venv", "code", "app"))
 
 # Ruta para servir el archivo index.html en la ruta principal "/"
 @app.get("/", response_class=HTMLResponse, tags=['Página Principal'])
@@ -74,7 +74,7 @@ ________________________________________________________________________________
 
 async def sentiment_analysis(año: int) -> dict:
     # Cargar el archivo .parquet
-    df_reviews = pd.read_parquet('..\\data\\users_reviews_etl_comprimido.parquet')
+    df_reviews = pd.read_parquet('..\\venv\\data\\users_reviews_etl_comprimido.parquet')
     
     # Convertir la columna 'date' a tipo datetime
     df_reviews['date'] = pd.to_datetime(df_reviews['date'])
