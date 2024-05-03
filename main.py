@@ -74,7 +74,7 @@ ________________________________________________________________________________
 
 async def sentiment_analysis(año: int) -> dict:
     # Cargar el archivo .parquet
-    df_reviews = pd.read_parquet('venv\\data\\users_reviews_etl_comprimido.parquet')
+    df_reviews = pd.read_parquet('venv/data/users_reviews_etl_comprimido.parquet')
     
     # Convertir la columna 'date' a tipo datetime
     df_reviews['date'] = pd.to_datetime(df_reviews['date'])
