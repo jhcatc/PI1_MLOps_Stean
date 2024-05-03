@@ -4,10 +4,14 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse, HTMLResponse
+import uvicorn
 import os
 
 # Crear la aplicación FastAPI
 app = FastAPI()
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=10000)
 
 '''
 _____________________________________________________________________________________________________________
@@ -97,6 +101,3 @@ async def sentiment_analysis(año: int) -> dict:
             nuevo_counts[sentimiento] = 0
     
     return nuevo_counts
-
-
-
