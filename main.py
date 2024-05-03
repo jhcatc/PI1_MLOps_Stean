@@ -6,26 +6,26 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse, HTMLResponse
 import os
 
-
+# Crear la aplicación FastAPI
 app = FastAPI()
 
 '''
 _____________________________________________________________________________________________________________
 '''
-# Obteniendo la ruta absoluta del directorio actual
+## Define la dirección relativa
+relative_path = 'venv\\code'
+# Obtener la ruta absoluta al directorio actual
 current_directory = os.path.dirname(os.path.realpath(__file__))
+# Combinar la dirección relativa con la ruta actual para obtener la ruta absoluta
+template_path = os.path.join(current_directory, relative_path)
 
-# Monta la carpeta "static" como archivos estáticos en la ruta "/static"
-app.mount("/static", StaticFiles(directory=os.path.join(current_directory, "venv", "code", "app", "static")), name="static")
+# Crear una instancia de Jinja2Templates para renderizar templates HTML
+templates = Jinja2Templates(directory=os.path.join(current_directory, "templates"))
 
-# Crea una instancia de Jinja2Templates para renderizar templates HTML
-templates = Jinja2Templates(directory=os.path.join(current_directory, "venv", "code", "app"))
-
-# Ruta para servir el archivo index.html en la ruta principal "/"
 @app.get("/", response_class=HTMLResponse, tags=['Página Principal'])
+
 async def main(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
-
 '''
 _____________________________________________________________________________________________________________
 '''
@@ -74,7 +74,7 @@ ________________________________________________________________________________
 
 async def sentiment_analysis(año: int) -> dict:
     # Cargar el archivo .parquet
-    df_reviews = pd.read_parquet('..\\venv\\data\\users_reviews_etl_comprimido.parquet')
+    df_reviews = pd.read_parquet('venv\\data\\users_reviews_etl_comprimido.parquet')
     
     # Convertir la columna 'date' a tipo datetime
     df_reviews['date'] = pd.to_datetime(df_reviews['date'])
