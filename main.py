@@ -6,7 +6,6 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse, HTMLResponse
 import uvicorn
 from sklearn.metrics import jaccard_score
-from flask import Flask, request, jsonify
 import os
 
 # Crear la aplicación FastAPI
