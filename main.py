@@ -105,37 +105,38 @@ async def sentiment_analysis(año: int) -> dict:
 _____________________________________________________________________________________________________________
 ''' 
 # sistema de recomendación item-item
-# Cargar el DataFrame
-df_sistRec = pd.read_parquet('venv/data/steam_games_etl_comprimido.parquet')
+@app.post('/item-item', tags= ['PI1-MLOps'])
 
-class SistemaRecomendacion:
-    def __init__(self, dataframe):
-        self.dataframe = dataframe
+async def obtener_recomendaciones(id_producto: int) -> dict:
+    # Cargar el DataFrame .parquet
+    df_sistRec = pd.read_parquet('venv/data/steam_games_etl_comprimido.parquet')
 
-    def calcular_similitud(self, juego_referencia):
-        # Verificar si el ID del juego existe en el DataFrame
-        if juego_referencia not in self.dataframe['id'].values:
-            return None  # Retorna None si el ID no existe
+    class SistemaRecomendacion:
+        def __init__(self, dataframe):
+            self.dataframe = dataframe
 
-        # Obtener el género del juego de referencia y convertirlo en lista
-        genero_referencia = self.dataframe.loc[self.dataframe['id'] == juego_referencia, 'genres'].iloc[0].split(', ')
+        def calcular_similitud(self, juego_referencia):
+            # Verificar si el ID del juego existe en el DataFrame
+            if juego_referencia not in self.dataframe['id'].values:
+                return None  # Retorna None si el ID no existe
+
+            # Obtener el género del juego de referencia y convertirlo en lista
+            genero_referencia = self.dataframe.loc[self.dataframe['id'] == juego_referencia, 'genres'].iloc[0].split(', ')
         
-        # Calcular la similitud de Jaccard entre el género del juego de referencia y todos los demás juegos
-        similitudes = {}
-        for index, row in self.dataframe.iterrows():
-            if row['id'] != juego_referencia:
-                genero_otro_juego = row['genres'].split(', ')
-                similitud = jaccard_score(genero_referencia, genero_otro_juego, average='macro')
-                similitudes[row['app_name']] = similitud
+            # Calcular la similitud de Jaccard entre el género del juego de referencia y todos los demás juegos
+            similitudes = {}
+            for index, row in self.dataframe.iterrows():
+                if row['id'] != juego_referencia:
+                    genero_otro_juego = row['genres'].split(', ')
+                    similitud = jaccard_score(genero_referencia, genero_otro_juego, average='macro')
+                    similitudes[row['app_name']] = similitud
 
-        # Ordenar los juegos por similitud y devolver los 5 más similares
-        juegos_similares = sorted(similitudes.items(), key=lambda x: x[1], reverse=True)[:5]
-        return juegos_similares
+            # Ordenar los juegos por similitud y devolver los 5 más similares
+            juegos_similares = sorted(similitudes.items(), key=lambda x: x[1], reverse=True)[:5]
+            return juegos_similares
 
-sistema_recomendacion = SistemaRecomendacion(df_sistRec)
+    sistema_recomendacion = SistemaRecomendacion(df_sistRec)
 
-@app.post('/item-item', tags= ['Recomendaciones'])
-async def obtener_recomendaciones(id_producto: int):
     recomendaciones = sistema_recomendacion.calcular_similitud(id_producto)
     if recomendaciones is None:
         return {"mensaje": "El ID del juego no existe en el sistema"}
