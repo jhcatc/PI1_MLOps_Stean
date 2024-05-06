@@ -5,14 +5,13 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse, HTMLResponse
-from sklearn.metrics.pairwise import linear_kernel
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 import uvicorn
 import os
 
 # Crear la aplicación FastAPI
 app = FastAPI()
-
 
 '''
 _____________________________________________________________________________________________________________
@@ -38,7 +37,7 @@ df_games =pd.read_parquet('venv/data/steam_games_etl_comprimido.parquet')
 df_items = pd.read_parquet('venv/data/users_items_etl_comprimido.parquet')
 
 # 'PlayTimeGenre' año mas con horas jugadas por Género
-@app.get('/consulta1', tags= ['PI1-MLOps-queries'])
+@app.get('/consulta1', tags= ['PI1-MLOps-Consultas'])
 async def PlayTimeGenre(genre:str) -> Dict[str, int]:
     
     # Filtrar por género
@@ -75,7 +74,7 @@ df_games =pd.read_parquet('venv/data/steam_games_etl_comprimido.parquet')
 df_items = pd.read_parquet('venv/data/users_items_etl_comprimido.parquet')
 
 # 'UserForGenre' usuario con mas horas jugadas por Género
-@app.get('/consulta2', tags= ['PI1-MLOps-queries'])
+@app.get('/consulta2', tags= ['PI1-MLOps-Consultas'])
 async def UserForGenre(genre:str) :
     
     # Filtrar por género
@@ -129,7 +128,7 @@ df_reviews = pd.read_parquet('venv/data/users_reviews_etl_comprimido.parquet')
 df_items = pd.read_parquet('venv/data/users_items_etl_comprimido.parquet')
 
 # 'UsersRecommend' top 3 de juegos MAS recomendados por año
-@app.get('/consulta3', tags= ['PI1-MLOps-queries'])
+@app.get('/consulta3', tags= ['PI1-MLOps-Consultas'])
 async def UsersRecommend(year:int)-> List[Dict[str, Any]]:
     # Filtrar por año y recommend=True
     filtered_reviews = df_reviews[(df_reviews['date'] == int(year)) & (df_reviews['recommend'] == True)]
@@ -162,7 +161,7 @@ df_reviews = pd.read_parquet('venv/data/users_reviews_etl_comprimido.parquet')
 df_items = pd.read_parquet('venv/data/users_items_etl_comprimido.parquet')
 
 # 'UsersNotRecommend' top 3 de juegos MENOS recomendados por año
-@app.get('/consulta4', tags= ['PI1-MLOps-queries'])
+@app.get('/consulta4', tags= ['PI1-MLOps-Consultas'])
 async def UsersNotRecommend(year:int) -> List[Dict[str, Any]]:
     # Filtrar por año y recommend=False
     filtered_reviews = df_reviews[(df_reviews['date'] == int(year)) & (df_reviews['recommend'] == False)]
@@ -186,7 +185,7 @@ async def UsersNotRecommend(year:int) -> List[Dict[str, Any]]:
 _____________________________________________________________________________________________________________
 ''' 
 # 'sentiment_analysis' cantidad de reseñas por año de lanzamiento
-@app.get('/consulta5', tags= ['PI1-MLOps-queries'])
+@app.get('/consulta5', tags= ['PI1-MLOps-Consultas'])
 async def sentiment_analysis(year:int) -> Dict[str, int]:
     # Cargar el DataFrame desde el archivo parquet
     df = pd.read_parquet('venv/data/users_reviews_etl_comprimido.parquet')
@@ -212,10 +211,105 @@ async def sentiment_analysis(year:int) -> Dict[str, int]:
 _____________________________________________________________________________________________________________
 _____________________________________________________________________________________________________________
 ''' 
-# sistema de recomendación user-item
-# Carga de datos
+# sistema de recomendación item-item
+def recomendacion_juego(id_game: int, df_games_path: str = 'venv/data/steam_games_etl_comprimido.parquet', df_reviews_path: str = 'venv/data/users_reviews_etl_comprimido.parquet') -> dict:
+    # Cargar DataFrames
+    df_games = pd.read_parquet(df_games_path)
+    df_reviews = pd.read_parquet(df_reviews_path)
 
+    # Obtener el género del juego ingresado
+    genres = df_games.loc[df_games['id_game'] == id_game, 'genres'].iloc[0]
+
+    # Filtrar juegos por géneros relacionados
+    related_games = df_games[df_games['genres'].apply(lambda x: any(genre in x for genre in genres))]
+
+    # Obtener los IDs de los juegos relacionados
+    related_game_ids = related_games['id_game'].tolist()
+
+    # Filtrar reviews por los juegos relacionados y que han sido recomendados
+    recommended_reviews = df_reviews[(df_reviews['item_id'].isin(related_game_ids)) & (df_reviews['recommend'] == True)]
+
+    # Obtener IDs únicos de los juegos recomendados
+    recommended_game_ids = recommended_reviews['item_id'].unique()
+
+    # Filtrar los juegos relacionados por los juegos recomendados
+    recommended_games = related_games[related_games['id_game'].isin(recommended_game_ids)]
+
+    # Crear un CountVectorizer para los géneros
+    vectorizer = CountVectorizer(tokenizer=lambda x: x.split(','))
+
+    # Obtener la matriz de géneros
+    genre_matrix = vectorizer.fit_transform(related_games['genres'])
+
+    # Calcular la similitud del coseno entre los juegos
+    similarity_matrix = cosine_similarity(genre_matrix, genre_matrix)
+
+    # Obtener el índice del juego ingresado
+    index = related_games.index[related_games['id_game'] == id_game].tolist()[0]
+
+    # Obtener las similitudes del juego ingresado con otros juegos
+    sim_scores = list(enumerate(similarity_matrix[index]))
+
+    # Ordenar los juegos por similitud
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+
+    # Obtener los 5 juegos más similares excluyendo el juego ingresado
+    top_similar_games = sim_scores[1:6]
+
+    # Obtener los nombres de los juegos recomendados
+    recommended_game_names = recommended_games.loc[recommended_games['id_game'].isin([related_games.iloc[i[0]]['id_game'] for i in top_similar_games]), 'app_name'].tolist()
+
+    return {"Juegos recomendados": recommended_game_names}
+
+# Endpoint para la recomendación de juegos
+@app.post('/item-item/', tags= ['PI1-MLOps-Recomendaciones'])
+def obtener_recomendacion(id_game: int):
+    recomendaciones = recomendacion_juego(id_game)
+    return recomendaciones
 
 '''
 _____________________________________________________________________________________________________________
 ''' 
+# sistema de recomendación user-item
+def recomendacion_usuario(user_id: str) -> Dict:
+    # Cargar los DataFrames
+    df_games = pd.read_parquet('venv/data/steam_games_etl_comprimido.parquet')
+    df_reviews = pd.read_parquet('venv/data/users_reviews_etl_comprimido.parquet')
+
+    # Filtrar las revisiones del usuario y encontrar los juegos recomendados
+    user_reviews = df_reviews[df_reviews['user_id'] == user_id]
+    recommended_games = user_reviews[user_reviews['recommend'] == True]['item_id']
+
+    recommended_games_names = []
+
+    # Verificar si hay juegos recomendados por el usuario
+    if len(recommended_games) == 0:
+        return {"Juegos recomendados": []}
+
+    # Recorrer los juegos recomendados por el usuario
+    for game_id in recommended_games:
+        # Verificar si el ID del juego recomendado está en df_games
+        if game_id not in df_games['id_game'].values:
+            continue
+        
+        # Encontrar el juego en df_games
+        game = df_games[df_games['id_game'] == game_id].iloc[0]
+        
+        # Calcular la similitud del coseno entre los géneros del juego recomendado y todos los juegos en df_games
+        count_vectorizer = CountVectorizer()
+        genre_matrix = count_vectorizer.fit_transform([game['genres']] + list(df_games['genres']))
+        cosine_similarities = cosine_similarity(genre_matrix[0:1], genre_matrix[1:]).flatten()
+
+        # Obtener los índices de los juegos más similares
+        similar_games_indices = cosine_similarities.argsort()[:-6:-1][1:]
+
+        # Obtener los nombres de los juegos más similares
+        similar_games_names = df_games.iloc[similar_games_indices]['app_name'].tolist()
+        recommended_games_names.extend(similar_games_names)
+
+    return {"Juegos recomendados": recommended_games_names}  
+
+@app.post('/user-item/', tags= ['PI1-MLOps-Recomendaciones'])
+async def optener_recomendacion_ususario(user_id: str):
+    recomendaciones = recomendacion_usuario(user_id)
+    return recomendaciones
