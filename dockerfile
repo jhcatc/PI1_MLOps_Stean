@@ -6,9 +6,8 @@ WORKDIR /app
 # Copia la carpeta venv desde tu repositorio de GitHub al contenedor
 COPY venv /app/venv
 
-# Activa el entorno virtual
-SHELL ["/bin/bash", "-c"]
-RUN source /app/venv/bin/activate
+# Establece el PATH para que apunte al binario del entorno virtual
+ENV PATH="/app/venv/bin:$PATH"
 
 # Copia los archivos de tu aplicación al contenedor
 COPY . .
