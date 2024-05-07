@@ -1,5 +1,8 @@
 FROM python:3.9-slim
 
+# Establece la variable de entorno para desactivar la advertencia de pip
+ENV PIP_NO_WARN_SCRIPT_LOCATION=1
+
 # Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
@@ -13,7 +16,7 @@ ENV PATH="/app/venv/bin:$PATH"
 COPY . .
 
 # Instala las dependencias necesarias
-RUN pip install --no-cache-dir nltk textblob decorator fastapi matplotlib-inline numpy pandas scikit-learn scikit-metrics scipy uvicorn wcwidth requests wordcloud typing
+RUN pip install --no-cache-dir --disable-pip-version-check nltk textblob decorator fastapi matplotlib-inline numpy pandas scikit-learn scikit-metrics scipy uvicorn wcwidth requests wordcloud typing
 
 # Expone el puerto en el que se ejecutará tu API
 EXPOSE 5000
