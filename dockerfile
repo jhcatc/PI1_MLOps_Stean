@@ -1,4 +1,3 @@
-# Utiliza una imagen base más ligera
 FROM python:3.9-slim
 
 # Establece el directorio de trabajo dentro del contenedor
@@ -8,7 +7,8 @@ WORKDIR /app
 COPY venv /app/venv
 
 # Activa el entorno virtual
-ENV PATH="/app/venv/bin:$PATH"
+SHELL ["/bin/bash", "-c"]
+RUN source /app/venv/bin/activate
 
 # Copia los archivos de tu aplicación al contenedor
 COPY . .
