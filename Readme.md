@@ -63,16 +63,27 @@ ____________________________
 
 ## Presentacion de la API
 
-    Ya completado los ETL y EDA, se realizan los funciones para consultas y recomendaciones con el uso de las librerias necesarias en un main.py. Se coloca el respectivo requirements.txt con lo requerido, .gitignore para ignorar todo lo que no se quiere subir a GitHub, asi como la carpeta Lib/ y la carpeta Scripts/.
+Ya completado los ETL y EDA, se realizan los funciones para consultas y recomendaciones con el uso de las librerias necesarias en un main.py. Se coloca el respectivo requirements.txt con lo requerido, .gitignore para ignorar todo lo que no se quiere subir a GitHub, asi como la carpeta Lib/ y la carpeta Scripts/.
 
-    El repositorio finalizado y probado en local con el uso de FastAPI y Uvicorn. Se sube a GitHub, junto a un Dockerfile en el cual se crea un entorno virtual, en este se instalan todas las dependencias y se deja abierto para oir el puerto 8000. Asi mismo al pie del main.py se deja la entrada de la aplicacion dejando dispobible el puerto 8000
+El repositorio finalizado y probado en local con el uso de FastAPI y Uvicorn. Se sube a GitHub, junto a un Dockerfile en el cual se crea un entorno virtual, en este se instalan todas las dependencias y se deja abierto para oir el puerto 8000. Asi mismo al pie del main.py se deja la entrada de la aplicacion dejando dispobible el puerto 8000
 
     if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
-    Se realiza Deploy a un servidor con el uso de Render y ayuda del Dockerfile antes comentado.
-_______________________________
+Se realiza Deploy a un servidor con el uso de Render y ayuda del Dockerfile antes comentado.
+
+
+El enlace de la aplicación desplegada con Render:
+
+[https://pi1-mlops-stean.onrender.com/](https://pi1-mlops-stean.onrender.com/)
+
+
+Al pulsar el boton para ingresar a la API
 
 ![Pag Principal](templates/static/principal.png)
+
+
 ________________________________
 ![Pag API](templates/static/api.png)
+
+________________________________________
