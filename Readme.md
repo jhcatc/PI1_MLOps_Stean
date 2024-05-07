@@ -6,13 +6,13 @@
 
 # PI1 - MLOps
 
-    Como parte demostrativa de la cursada de Data Science de Henry, estan los Labs. En este Proyecto nos enfocamos en el primer Proyecto individual, este proyecto consta de un MVP (_Minimum Viable Product_) donde existe parametros mínimos esperados, se asume un ROL de Data Science paar el alumno.
+Como parte demostrativa de la cursada de Data Science de Henry, estan los Labs. En este Proyecto nos enfocamos en el primer Proyecto individual, este proyecto consta de un MVP (_Minimum Viable Product_) donde existe parametros mínimos esperados, se asume un ROL de Data Science para el alumno.
 ____________________
 
 
 ## Proyecto de ML y Consultas Datos de la plataforma Steam
 
-    Se nos ha suministrado tres Bases de Datos en formato json comprimidas gz, luego de realizar ETL yEDA, nos quedamos con 3 Dataframes de Formato .parquet comprimidos, los cuales estan en este mismo repositorio
+Se nos ha suministrado tres Bases de Datos en formato json comprimidas gz, luego de realizar ETL yEDA, nos quedamos con 3 Dataframes de Formato .parquet comprimidos, los cuales estan en este mismo repositorio
 
 #### Los Dataframe son:
 .- df_items:
@@ -67,8 +67,8 @@ Ya completado los ETL y EDA, se realizan los funciones para consultas y recomend
 
 El repositorio finalizado y probado en local con el uso de FastAPI y Uvicorn. Se sube a GitHub, junto a un Dockerfile en el cual se crea un entorno virtual, en este se instalan todas las dependencias y se deja abierto para oir el puerto 8000. Asi mismo al pie del main.py se deja la entrada de la aplicacion dejando dispobible el puerto 8000
 
-    if __name__ == '__main__':
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+if __name__ == '__main__':
+uvicorn.run(app, host="0.0.0.0", port=8000)
 
 Se realiza Deploy a un servidor con el uso de Render y ayuda del Dockerfile antes comentado.
 
