@@ -1,1 +1,93 @@
-<h1>Pagina Principal</h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML1-MLOps</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: rgb(27, 40, 56);
+        }
+        
+        .top-bar {
+            background-color: rgb(22, 29, 36);
+            width: 100%;
+            height: 25%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            padding: 0 20px; /* Ajuste del padding */
+        }
+        
+        .logo {
+            width: 250px; /* Aumento del 150% */
+            height: auto;
+            padding: 10px 10px;
+        }
+        
+        .button {
+            background-color: rgb(58, 104, 150);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .button:hover, .button:focus {
+            background-color: white;
+            color: black;
+        }
+        
+        .content {
+            margin: 15% auto 0; /* Margen superior del 15% y centrado horizontal */
+            padding: 20px;
+            color: white;
+            max-width: 60%; /* Máximo del 60% del ancho de la página */
+            text-align: center; /* Centrado del contenido */
+        }
+
+        /* Estilos para la lista */
+        .content ul {
+            text-align: left; /* Alineación a la izquierda */
+            margin-top: 20px; /* Espacio superior */
+            margin-left: 20px; /* Espacio respecto al texto anterior */
+        }
+
+        .content ul li {
+            margin-bottom: 10px; /* Espacio entre elementos de la lista */
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <img src="static/steam.png" alt="Logo Steam" class="logo">
+        <img src="static/henry.png" alt="Logo Henry" class="logo">
+        <!-- Botón con redireccionamiento -->
+        <button class="button" onclick="window.location.href='https://pi1-mlops-stean.onrender.com/docs'">Ingresar a la API de Consultas</button>
+    </div>
+
+    <div class="content">
+        <!-- Aquí puedes colocar tu contenido -->
+        <h1>Página Principal de presentacion del Proyecto PI1 MLOps</h1>
+        <p>En esta página presentaremos: cinco consultas y dos modelos de ML de recomendaciones que se realizan a las Bases de Datos de Steam (plataforma de videojuegos).</p>
+         <!-- Información como lista -->
+        <ul>
+            <li>Autor: Jhonny José Catari Carrasquel</li>
+	    <li>Fecha de Inicio: 22 Abril 2024</li>
+            <li>Fecha Final: 05 Mayo 2024</li>	
+            <li>Mail: <a href="mailto:jhcatc@gmail.com" target="_blank">jhcatc@gmail.com</a></li>
+            <li>GitHub: <a href="https://github.com/jhcatc" target="_blank">https://github.com/jhcatc</a></li>
+            <li>Linkedin: <a href="https://www.linkedin.com/in/jhonny-jose-catari-carrasquel-1792127a/" target="_blank">https://www.linkedin.com/in/jhonny-jose-catari-carrasquel-1792127a/</a></li>
+        </ul>
+    </div>
+</body>
+</html>
