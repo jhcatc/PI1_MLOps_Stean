@@ -313,3 +313,7 @@ def recomendacion_usuario(user_id: str) -> Dict:
 async def optener_recomendacion_ususario(user_id: str):
     recomendaciones = recomendacion_usuario(user_id)
     return recomendaciones
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000)
