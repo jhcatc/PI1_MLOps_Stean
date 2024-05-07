@@ -22,4 +22,4 @@ RUN pip install --no-cache-dir nltk textblob decorator fastapi matplotlib-inline
 EXPOSE 5000
 
 # Comando de inicio para ejecutar tu aplicación
-CMD ["python", "app.py"]
+CMD ["python", "main.py"]
