@@ -16,7 +16,7 @@ ENV PATH="/app/venv/bin:$PATH"
 COPY . .
 
 # Instala las dependencias necesarias
-RUN pip install --no-cache-dir nltk textblob decorator fastapi matplotlib-inline numpy pandas scikit-learn scikit-metrics scipy uvicorn wcwidth requests wordcloud typing
+RUN pip install --no-cache-dir nltk textblob decorator fastapi matplotlib-inline numpy pandas scikit-learn scikit-metrics scipy uvicorn wcwidth requests wordcloud typing pyarrow fastparquet
 
 # Expone el puerto en el que se ejecutará tu API
 EXPOSE 8000
