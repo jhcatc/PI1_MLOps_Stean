@@ -211,7 +211,7 @@ async def sentiment_analysis(year:int) -> Dict[str, int]:
 _____________________________________________________________________________________________________________
 _____________________________________________________________________________________________________________
 ''' 
-# sistema de recomendación item-item
+#sistema de recomendación item-item
 def recomendacion_juego(id_game: int, df_games_path: str = 'venv/data/steam_games_etl_comprimido.parquet', df_reviews_path: str = 'venv/data/users_reviews_etl_comprimido.parquet') -> dict:
     # Cargar DataFrames
     df_games = pd.read_parquet(df_games_path)
@@ -235,12 +235,16 @@ def recomendacion_juego(id_game: int, df_games_path: str = 'venv/data/steam_game
     # Filtrar los juegos relacionados por los juegos recomendados
     recommended_games = related_games[related_games['id_game'].isin(recommended_game_ids)]
 
-    # Crear un CountVectorizer para los géneros
-    vectorizer = CountVectorizer(tokenizer=lambda x: x.split(','))
+    # Crear una Funcion para Tokenizar 
+    def custom_tokenizer(text):
+        return text.split(',')
+
+    # Creamos CountVectorizer para los géneros
+    vectorizer = CountVectorizer(tokenizer=custom_tokenizer, token_pattern=None)
 
     # Obtener la matriz de géneros
     genre_matrix = vectorizer.fit_transform(related_games['genres'])
-
+    
     # Calcular la similitud del coseno entre los juegos
     similarity_matrix = cosine_similarity(genre_matrix, genre_matrix)
 
